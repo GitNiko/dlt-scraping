@@ -33,38 +33,38 @@ class QuotesSpider(scrapy.Spider):
         self.log('Saved file %s' % filename)
 
 # 暂时用不到复杂的方式
-class DLTSpider(scrapy.Spider):
-    name = "dlt"
-
-    def start_requests(self):
-        urls = [
-            # 'http://www.sporttery.cn/digitallottery/',
-            'http://info.sporttery.cn/interface/lottery_num.php?action=new',
-        ]
-        for url in urls:
-            yield  SplashRequest(url, self.parse, args={'wait': 0.5})
-
-    def parse(self, response):
-        # page = response.xpath('/html/body/div[4]/div[1]/div[1]/table/tbody/tr[2]/td[1]/text()').extract()
-        # print('------', page)
-        # print('page', response.body)
-        yield {
-            'dlt': '1'
-        }
-
-    def getDlt(self, response):
-        pass
-        quotes = {
-            name: '/html/body/div[4]/div[1]/div[1]/table/tbody/tr[2]/td[1]/span/text()',
-            round: '/html/body/div[4]/div[1]/div[1]/table/tbody/tr[2]/td[1]/text()',
-            code: '',
-            total: '/html/body/div[4]/div[1]/div[1]/table/tbody/tr[2]/td[2]/div[4]/text()',
-            date: '/html/body/div[4]/div[1]/div[1]/table/tbody/tr[2]/td[2]/div[1]/text()',
-        }
-        item = DLTItem()
-
-        for key, value in quotes.items():
-            item.__setattr__(key, response.xpath(value).extract_first())
+# class DLTSpider(scrapy.Spider):
+#     name = "dlt"
+#
+#     def start_requests(self):
+#         urls = [
+#             # 'http://www.sporttery.cn/digitallottery/',
+#             'http://info.sporttery.cn/interface/lottery_num.php?action=new',
+#         ]
+#         for url in urls:
+#             yield  SplashRequest(url, self.parse, args={'wait': 0.5})
+#
+#     def parse(self, response):
+#         # page = response.xpath('/html/body/div[4]/div[1]/div[1]/table/tbody/tr[2]/td[1]/text()').extract()
+#         # print('------', page)
+#         # print('page', response.body)
+#         yield {
+#             'dlt': '1'
+#         }
+#
+#     def getDlt(self, response):
+#         pass
+#         quotes = {
+#             name: '/html/body/div[4]/div[1]/div[1]/table/tbody/tr[2]/td[1]/span/text()',
+#             round: '/html/body/div[4]/div[1]/div[1]/table/tbody/tr[2]/td[1]/text()',
+#             code: '',
+#             total: '/html/body/div[4]/div[1]/div[1]/table/tbody/tr[2]/td[2]/div[4]/text()',
+#             date: '/html/body/div[4]/div[1]/div[1]/table/tbody/tr[2]/td[2]/div[1]/text()',
+#         }
+#         item = DLTItem()
+#
+#         for key, value in quotes.items():
+#             item.__setattr__(key, response.xpath(value).extract_first())
 
 # 简单的获取
 class TinyDLTSpider(scrapy.Spider):
@@ -79,14 +79,13 @@ class TinyDLTSpider(scrapy.Spider):
         datas = genJS(js)
         print('datas', datas)
         mapping = {
-                '大乐透': DLTType.Dlt,
-                '七星彩': DLTType.Qxc,
-                '22选5': DLTType.X5,
-                '31选7': DLTType.X7,
-                '排列3': DLTType.P3,
-                '排列5': DLTType.P5
+                '大乐透': DLTType.Dlt.value,
+                '七星彩': DLTType.Qxc.value,
+                '22选5': DLTType.X5.value,
+                '31选7': DLTType.X7.value,
+                '排列3': DLTType.P3.value,
+                '排列5': DLTType.P5.value
         }
-        items = []
         for cate in datas:
             item = DLTItem()
             item['name'] = cate[0]
@@ -95,6 +94,5 @@ class TinyDLTSpider(scrapy.Spider):
             item['code'] = cate[2]
             item['date'] = cate[3]
             item['total'] = cate[4]
+            yield  item
             # print('item', item)
-            items.append(items)
-        yield items
